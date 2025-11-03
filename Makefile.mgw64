@@ -1,0 +1,7 @@
+all: tls_light_mod_installer.exe
+
+OBJDIR=./OBJ
+
+tls_light_mod_installer.exe: tls_light_mod_installer.py
+	python -m PyInstaller  --distpath ./. --workpath $(OBJDIR) --onefile tls_light_mod_installer.py
+
