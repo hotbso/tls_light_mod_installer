@@ -14,7 +14,7 @@ Then it applies patches from these backups and overwrites the original files.\
 That means you can apply the installation multiple times.
 
 ## How to restore ?
-Just copy over the contents of ``<aircraft>/tls_light_mod_installer-bck`` to <aircraft> .
+Just copy over the contents of ``<aircraft>/tls_light_mod_installer-bck`` to ``<aircraft>/`` .
 
 ## What to do after an update of the aircraft?
 Just delete the folder ``<aircraft>/tls_light_mod_installer-bck`` and run the installer again.
