@@ -109,10 +109,6 @@ rgb_table = {
 
 rgb = rgb_table[light_type]
 
-acf_type_1 = acf_type
-if acf_type == "320":
-    acf_type_1 = ""
-
 metallness_files = [
     f"cab{acf_type}_0.obj",
     f"cab{acf_type}_1.obj",
