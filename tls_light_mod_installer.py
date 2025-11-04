@@ -45,7 +45,7 @@ def usage():
             tls_light_mod_installer
                 -acf_dir     dir to acf, e.g. e:/X-Plane-12/Aircraft/ToLissA320Neo
                 -mod_dir     dir of lighting mod, e.g. e:/XPL-Tools/a20n-light_mod
-                -type        normal|new|led
+                -type        current|new|led
 
         Example:
             tls_light_mod_installer -acf_dir e:/X-Plane-12/Aircraft/ToLissA320Neo -mod_dir e:/XPL-Tools/a20n-light_mod -type led
@@ -85,7 +85,7 @@ while i < len(sys.argv):
 if acf_dir is None or light_mod_dir is None or light_type is None:
     usage()
 
-if light_type not in ["normal", "new", "led"]:
+if light_type not in ["current", "new", "led"]:
     log.error(f"Unknown light type: {light_type}")
     usage()
 
@@ -115,12 +115,21 @@ if acf_type == "320":
 
 metallness_files = [
     f"cab{acf_type}_0.obj",
+    f"cab{acf_type}_1.obj",
+    f"cab{acf_type}_2.obj",
+    f"cab{acf_type}_3.obj",
+    "cargo.obj",
     f"cargo{acf_type}.obj",
-    f"chairs{acf_type_1}.obj",
+    "chairs.obj",
+    "chars321.obj",
     "Copilot.obj",
     "DCDUs.obj",
     "engines.obj",
-    f"fuselage{acf_type_1}.obj",
+    "fuselage.obj",
+    f"fuselage{acf_type}.obj",
+    "fuselage321_1.obj",
+    "fuselage321_2.obj",
+    "fuselage321_3.obj",
     "gear.obj",
     "GlassInterior.obj",
     "Ipad.obj",
@@ -138,26 +147,22 @@ metallness_files = [
     "walls_bottom.obj",
     "walls_outer.obj",
     "walls_top.obj",
-    f"wing{acf_type_1}L.obj",
-    f"wing{acf_type_1}R.obj"
+    "wingL.obj",
+    "wingR.obj"
+    "wing321L.obj",
+    "wing321R.obj"
 ]
 
 translucency_files = [
     "knobs.obj",
     "SunShades.obj",
-    f"fuselage{acf_type_1}.obj",
+    "fuselage.obj",
+    "fuselage321_1.obj",
+    "fuselage321_2.obj",
+    "fuselage321_3.obj",
     "GlassInterior.obj",
     "DCDUs.obj"
 ]
-
-fuselage_files_321 = [
-    "fuselage321_1.obj",
-    "fuselage321_2.obj",
-    "fuselage321_3.obj"]
-
-if acf_type == "321":
-    metallness_files.extend(fuselage_files_321)
-    translucency_files.extend(fuselage_files_321)
 
 def patch_acf_file():
     """Patch the acf file to adjust light parameters."""
@@ -211,6 +216,9 @@ def patch_acf_file():
 def add_attributes_to_obj(obj_name, add_translucency=False):
     """Add attributes to the given .obj file."""
     obj_path = os.path.join(acf_dir, "objects", obj_name)
+    if not os.path.isfile(obj_path):
+        return
+
     obj_path_bck = os.path.join(bck_dir, "objects", obj_name)
 
     if not os.path.isfile(obj_path_bck):
