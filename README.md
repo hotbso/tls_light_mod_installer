@@ -6,7 +6,7 @@ Discord only: https://discord.gg/Zu2nEcxeDd
 
 ## Installation
 Download the latest release from here: https://github.com/hotbso/tls_light_mod_installer/releases/latest .
-Unpack in any directory.
+Pick the binary corresponding to your platform and place it anywhere.
 
 ## How it works
 For all affected files the installer creates a backup **once** in directory ``<aircraft>/tls_light_mod_installer-bck``.
