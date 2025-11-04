@@ -1,5 +1,7 @@
 """
     tls_light_mod_installer: Install light mod for Toliss A3xx family aircraft.
+        The light mod of Gus Rodrigues can be downloaded from
+        https://forums.x-plane.org/files/file/93337-a320-light-mod/ .
 
     Copyright (C) 2025  Holger Teutsch
 
@@ -38,10 +40,12 @@ log.info(f"args: {sys.argv}")
 
 def usage():
     log.error(
-        """tls_light_mod_installer
-            -acf_dir     dir to acf, e.g. e:/X-Plane-12/Aircraft/ToLissA320Neo
-            -mod_dir     dir of lighting mod, e.g. e:/XPL-Tools/a20n-light_mod
-            -type        normal|new|led
+        """
+        usage:
+            tls_light_mod_installer
+                -acf_dir     dir to acf, e.g. e:/X-Plane-12/Aircraft/ToLissA320Neo
+                -mod_dir     dir of lighting mod, e.g. e:/XPL-Tools/a20n-light_mod
+                -type        normal|new|led
 
         Example:
             tls_light_mod_installer -acf_dir e:/X-Plane-12/Aircraft/ToLissA320Neo -mod_dir e:/XPL-Tools/a20n-light_mod -type led
@@ -85,7 +89,6 @@ if light_type not in ["normal", "new", "led"]:
     log.error(f"Unknown light type: {light_type}")
     usage()
 
-
 if os.path.isfile(os.path.join(acf_dir, "a320.acf")):
     acf_type = "320"
 elif os.path.isfile(os.path.join(acf_dir, "a321.acf")):
@@ -97,15 +100,6 @@ else:
     usage()
 
 log.info(f"Detected acf type: A{acf_type}")
-
-acf_path = os.path.join(acf_dir, f"a{acf_type}.acf")
-if not os.path.isfile(acf_path + ".bck"):
-    log.info(f"Backing up {acf_path} to {acf_path}.bck...")
-    shutil.copy2(acf_path, acf_path + ".bck")
-
-
-
-#---------------------------------------------------------------------------------
 
 rgb_table = {
     "current": [1.0, 0.37, 0.16],
@@ -169,7 +163,7 @@ def patch_acf_file():
     """Patch the acf file to adjust light parameters."""
     log.info(f"Patching {acf_path}...")
 
-    lines = open(acf_path + ".bck", 'r').readlines()
+    lines = open(acf_path_bck, 'r').readlines()
 
     with open(acf_path, 'w', newline='\n') as acf_file:
         for line in lines:
@@ -217,14 +211,14 @@ def patch_acf_file():
 def add_attributes_to_obj(obj_name, add_translucency=False):
     """Add attributes to the given .obj file."""
     obj_path = os.path.join(acf_dir, "objects", obj_name)
-    obj_bck = obj_path + ".bck"
+    obj_path_bck = os.path.join(bck_dir, "objects", obj_name)
 
-    if not os.path.isfile(obj_bck):
-        log.info(f"Backing up {obj_path} to {obj_bck}...")
-        shutil.copy2(obj_path, obj_bck)
+    if not os.path.isfile(obj_path_bck):
+        log.info(f"Backing up {obj_path} to {obj_path_bck}...")
+        shutil.copy2(obj_path, obj_path_bck)
 
     log.info(f"Adding attributes to {obj_name}...")
-    lines = open(obj_path + ".bck", 'r').readlines()
+    lines = open(obj_path_bck, 'r').readlines()
 
     have_metalness = False
     have_specular = False
@@ -264,16 +258,27 @@ def add_attributes_to_obj(obj_name, add_translucency=False):
             obj_file.write(line)
 
 ################################################################################
+bck_dir = os.path.join(acf_dir, "tls_light_mod_installer-bck")
+os.makedirs(os.path.join(bck_dir, "objects"), exist_ok=True)
+
+acf_fn = f"a{acf_type}.acf"
+acf_path = os.path.join(acf_dir, acf_fn)
+acf_path_bck = os.path.join(bck_dir, acf_fn)
+if not os.path.isfile(acf_path_bck):
+    log.info(f"Backing up {acf_path} to {acf_path_bck}...")
+    shutil.copy2(acf_path, acf_path_bck)
+
+
 patch_acf_file()
 
 mod_obj_dir = os.path.join(light_mod_dir, "objects")
 for _, _, files in os.walk(mod_obj_dir):
     for f in files + ["lights_inn.obj"]:
         obj_path = os.path.join(acf_dir, "objects", f)
-        bck_path = obj_path + ".bck"
-        if os.path.isfile(obj_path) and not os.path.isfile(bck_path):
-            log.info(f"Backing up {obj_path} to {bck_path}...")
-            shutil.copy2(obj_path, bck_path)
+        obj_path_bck = os.path.join(bck_dir, "objects", f)
+        if os.path.isfile(obj_path) and not os.path.isfile(obj_path_bck):
+            log.info(f"Backing up {obj_path} to {obj_path_bck}...")
+            shutil.copy2(obj_path, obj_path_bck)
 
 for _, _, files in os.walk(mod_obj_dir):
     for f in files:
@@ -290,7 +295,6 @@ obj_path = os.path.join(acf_dir, "objects", "lights_inn.obj")
 
 log.info(f"Installing {mod_obj_path} to {obj_path}...")
 shutil.copy2(mod_obj_path, obj_path)
-
 
 for file in metallness_files:
     add_attributes_to_obj(file, file in translucency_files)
