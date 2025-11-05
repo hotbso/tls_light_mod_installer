@@ -48,7 +48,7 @@ jobs:
             tls_light_mod_installer.exe
 
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
     permissions:
       contents: write
@@ -66,6 +66,6 @@ jobs:
         with:
           files: |
             ${{ github.workspace }}/build/windows-latest-build/tls_light_mod_installer.exe
-            ${{ github.workspace }}/build/ubuntu-latest-build/tls_light_mod_installer_ubuntu-latest
+            ${{ github.workspace }}/build/ubuntu-22.04-build/tls_light_mod_installer_ubuntu-22.04
             ${{ github.workspace }}/build/macos-13-build/tls_light_mod_installer_macos-13
           prerelease: ${{ contains(github.ref_name, '-') }}
