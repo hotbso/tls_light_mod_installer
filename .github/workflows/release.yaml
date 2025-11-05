@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-22.04, macos-13]
+        os: [windows-latest, ubuntu-22.04, macos-14]
     steps:
       - uses: actions/checkout@v3
 
@@ -67,5 +67,5 @@ jobs:
           files: |
             ${{ github.workspace }}/build/windows-latest-build/tls_light_mod_installer.exe
             ${{ github.workspace }}/build/ubuntu-22.04-build/tls_light_mod_installer_ubuntu-22.04
-            ${{ github.workspace }}/build/macos-13-build/tls_light_mod_installer_macos-13
+            ${{ github.workspace }}/build/macos-14-build/tls_light_mod_installer_macos-14
           prerelease: ${{ contains(github.ref_name, '-') }}
